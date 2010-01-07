@@ -17,9 +17,11 @@
     (values obs reward)))
 
 (defmethod reset ((env modeled-env))
-  (multiple-value-bind (obs s) (sample-initial (model env))
-    (set-state s env)
-    obs))
+  (reset-to-state env (sample-initial (model env))))
+
+(defmethod reset-to-state ((env modeled-env) s)
+  (set-state s env)
+  (sample-initial-observation (model env) s))
 
 (defmethod at-terminal-state ((env modeled-env))
   (is-terminal-state (model env) (get-state env)))
@@ -35,7 +37,10 @@
   (:documentation "Sample from the transition distribution.  Return 1) observation 2) reward 3) next state."))
 
 (defgeneric sample-initial (env-model)
-  (:documentation "Sample from the initial state distribution of the environment.  Return the associated observation and state."))
+  (:documentation "Sample from the initial state distribution of the environment."))
+
+(defgeneric sample-initial-observation (env-model s)
+  (:documentation "Sample the observation corresponding to a given initial state."))
 
 (defgeneric is-terminal-state (env-model state)
   (:documentation "Is this a terminal state of the environment?.  By default, always returns nil.")
@@ -46,5 +51,5 @@
   (:method (env-model state action) (declare (ignore env-model state action)) t))
 
 (defgeneric legal-action-list-at-state (model state)
-  (:documentation "List of legal actions at state (or throw action-list-unavailable condition).")
-  (:method (model state) (declare (ignore model state)) (error 'action-list-unavailable)))
+  (:documentation "List of legal actions at state"))
+

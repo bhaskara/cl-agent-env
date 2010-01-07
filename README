@@ -1,9 +1,9 @@
 Common Lisp code for a single agent in a discrete environment (cf AI: A Modern Approach, by Russell and Norvig).
 
-Requires the series package (series.sourceforge.net); tested with version 2.2.10.
+Requires cl-utils (git@github.com:bhaskara/cl-utils.git).
 
-An environment is a stateful black box in which an agent does actions and receives observations and rewards.  Various generic operations are defined for environments.  One simple way to define an environment is by subclassing modeled-env, and defining various purely function operations, such as sample-next-state.  
+An environment is a stateful black box in which an agent does actions and receives observations and rewards.  Various generic operations are defined for environments.  One simple way to define an environment is by subclassing modeled-env, and defining various purely functional operations, such as sample-next-state.  
 
 An agent is represented as a function that takes in the most recent observation and reward, and returns an action.  You can make agents with local state by using closures.
 
-Given an agent and environment, you can generate trajectories of states, actions, observations, and rewards: see trajectory.lisp.  The trajectories are represented as lazy sequences, using the series package.
+Given an agent and environment, you can generate trajectories of states, actions, observations, and rewards: see trajectory.lisp.

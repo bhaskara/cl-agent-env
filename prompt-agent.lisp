@@ -1,25 +1,15 @@
 (in-package :agent-env)
 
-(defun default-prompter (env show-state)
-  #'(lambda (str o r)
-      (terpri str)
-      (let ((s (get-state env))
-	    (actions (legal-action-list env)))
-	(pprint-logical-block (str nil)
-	  (format str "Observation: ~a~:@_Reward: ~a~:@_~:[~*~;State: ~a~:@_~]Actions: ~a~:@_Next action? " 
-		  o r show-state s actions)))))
-
-(defun make-prompt-agent (env &key (show-state t) (prompter nil))
-  "Agent that prints observation and reward, then reads state from standard input."
-  (setq prompter (or prompter (default-prompter env show-state)))
+(defun make-prompt-agent ()
+  "Agent that reads action from standard input"
   #'(lambda (o r)
-      (let ((str t))
-	(terpri str)
-	(pprint-logical-block (str nil)
-	  (funcall prompter str o r)
-	  (format str "~:@_Action? ")))
-      (read)))
+      (declare (ignore o r))
+      (format t "~&Action? ")
+      (let ((a (read)))
+	(if (and (symbolp a) (equal (string-upcase (symbol-name a)) "Q"))
+	    (progn 
+	      (format t "~&Quitting")
+	      (error 'agent-finished))
+	    a))))
 	  
 
-(defun io-interface (env &key (reset t) (prompter nil))
-  (collect (env-agent-trajectory env (make-prompt-agent env :prompter prompter) :reset reset)))

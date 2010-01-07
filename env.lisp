@@ -10,7 +10,10 @@
   (:documentation "Perform the given action in ENV.  Return 1) observation 2) reward."))
 
 (defgeneric reset (env)
-  (:documentation "Reset ENV's state according to some initial distribution."))
+  (:documentation "Reset ENV's state according to some initial distribution"))
+
+(defgeneric reset-to-state (env state)
+  (:documentation "Reset ENV's state to STATE"))
 
 (defgeneric get-state (env)
   (:documentation "Return current state of ENV."))
@@ -22,5 +25,4 @@
   (:documentation "Is the environment at a terminal state?"))
 
 (defgeneric legal-action-list (env)
-  (:documentation "Return list of legal actions at state, or throw action-list-unavailable exception.")
-  (:method (env) (declare (ignore env)) (error 'action-list-unavailable)))
+  (:documentation "Return list of legal actions at state"))
