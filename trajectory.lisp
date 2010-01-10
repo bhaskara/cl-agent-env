@@ -1,10 +1,10 @@
 (in-package :agent-env)
 
 (defstruct (transition (:type list) (:constructor create-transition))
-    a o r s)
+    action observation reward state)
 
 (defun make-transition (a o r env include-state)
-  (create-transition :a a :o o :r r :s (if include-state (get-state env) :unspecified)))
+  (create-transition :action a :observation o :reward r :state (if include-state (get-state env) :unspecified)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Generation of trajectories of an agent in environment
@@ -16,7 +16,7 @@
   (cond
     ((eql reset :default) (reset env))
     ((eql reset :current) (reset-to-state env (get-state env)))
-    (t (error "Unrecognized value ~a of reset argument" reset))))
+    (t (reset-to-state env reset))))
 
 (defun env-agent-trajectory (env agent &key (reset :default) (include-state nil))
   "Return iterator over transitions resulting from running agent in environment.  RESET is either :default (to reset) or :current (reset to current state).  INCLUDE-STATE governs whether the full state is included in the transition (if not, it's set to :unspecified)."
