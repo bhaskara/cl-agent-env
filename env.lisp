@@ -13,7 +13,7 @@
   (:documentation "Reset ENV's state according to some initial distribution"))
 
 (defgeneric reset-to-state (env state)
-  (:documentation "Reset ENV's state to STATE"))
+  (:documentation "Reset ENV's state to STATE, and return the corresponding initial observation."))
 
 (defgeneric get-state (env)
   (:documentation "Return current state of ENV."))
