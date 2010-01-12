@@ -18,9 +18,10 @@
     ((eql reset :current) (reset-to-state env (get-state env)))
     (t (reset-to-state env reset))))
 
-(defun env-agent-trajectory (env agent &key (reset :default) (include-state nil))
-  "Return iterator over transitions resulting from running agent in environment.  RESET is either :default (to reset) or :current (reset to current state).  INCLUDE-STATE governs whether the full state is included in the transition (if not, it's set to :unspecified)."
+(defun env-agent-trajectory (env agent &key (reset :default) (include-state nil) max-num-steps)
+  "Return iterator over transitions resulting from running agent in environment.  RESET is either :default (to reset) or :current (reset to current state).  INCLUDE-STATE governs whether the full state is included in the transition (if not, it's set to :unspecified).  If MAX-NUM-STEPS is provided, the episode is terminated after that many steps at most."
   (declare (function agent))
+  (when max-num-steps (setq agent (stop-after agent max-num-steps)))
   (let ((first-time t)
 	(done nil)
 	last-obs last-reward last-action)
@@ -41,7 +42,8 @@
 	      (handler-case
 		  (let ((action (funcall agent last-obs last-action last-reward)))
 		    (mvsetq (last-obs last-reward) (act env action))
-		    (setq done (at-terminal-state env))
+		    (setq done (at-terminal-state env)
+			  last-action action)
 		    (values t (make-transition action last-obs last-reward env include-state)))
 		(agent-finished (c)
 		  (declare (ignore c))
@@ -55,3 +57,10 @@
     (dolist (l listeners)
       (funcall l trans))))
 
+(defun stop-after (agent n)
+  "Return a new agent that's like agent except it throws an agent-finished condition after n steps."
+  (let ((i 0))
+    #'(lambda (&rest args)
+	(if (> (incf i) n)
+	    (error 'agent-finished)
+	    (apply agent args)))))
