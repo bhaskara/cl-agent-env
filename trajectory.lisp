@@ -23,7 +23,7 @@
   (declare (function agent))
   (let ((first-time t)
 	(done nil)
-	last-obs last-reward)
+	last-obs last-reward last-action)
     #'(lambda ()
 	(unless done
 	  (if first-time
@@ -32,13 +32,14 @@
 	      (progn
 		(setq last-obs (reset-env env reset)
 		      last-reward 0.0
+		      last-action 'reset
 		      first-time nil
 		      done (at-terminal-state env))
-		(values t (make-transition 'reset last-obs last-reward env include-state)))
+		(values t (make-transition last-action last-obs last-reward env include-state)))
 
 	      ;; Else, do a normal transition
 	      (handler-case
-		  (let ((action (funcall agent last-obs last-reward)))
+		  (let ((action (funcall agent last-obs last-action last-reward)))
 		    (mvsetq (last-obs last-reward) (act env action))
 		    (setq done (at-terminal-state env))
 		    (values t (make-transition action last-obs last-reward env include-state)))
