@@ -18,14 +18,15 @@
     ((eql reset :current) (reset-to-state env (get-state env)))
     (t (reset-to-state env reset))))
 
-(defun env-agent-trajectory (env agent &key (reset :default) (include-state nil) max-num-steps)
-  "Return iterator over transitions resulting from running agent in environment.  RESET is either :default (to reset) or :current (reset to current state).  INCLUDE-STATE governs whether the full state is included in the transition (if not, it's set to :unspecified).  If MAX-NUM-STEPS is provided, the episode is terminated after that many steps at most."
+(defun env-agent-trajectory (env agent &key (reset :default) (include-state nil) max-num-steps termination-condition)
+  "Return iterator over transitions resulting from running agent in environment.  RESET is either :default (to reset) or :current (reset to current state).  INCLUDE-STATE governs whether the full state is included in the transition (if not, it's set to :unspecified).  If MAX-NUM-STEPS is provided, the episode is terminated after that many steps at most.  If TERMINATION-CONDITION is provided, stop when you see a transition that satisfies it."
   (declare (function agent))
-  (when max-num-steps (setq agent (stop-after agent max-num-steps)))
   (let ((first-time t)
 	(done nil)
 	last-obs last-reward last-action)
-    #'(lambda ()
+    (restrict-trajectory
+     max-num-steps termination-condition
+     #'(lambda ()
 	(unless done
 	  (if first-time
 
@@ -48,7 +49,7 @@
 		(agent-finished (c)
 		  (declare (ignore c))
 		  (setq done t)
-		  nil)))))))
+		  nil))))))))
 
 (defun execute-agent-in-env (agent env listeners &key (reset :default) (include-state nil))
   "Execute agent in ENV, and call each listener after each transition.  RESET and INCLUDE-STATE are as in env-agent-trajectory."
@@ -57,10 +58,11 @@
     (dolist (l listeners)
       (funcall l trans))))
 
-(defun stop-after (agent n)
-  "Return a new agent that's like agent except it throws an agent-finished condition after n steps."
-  (let ((i 0))
-    #'(lambda (&rest args)
-	(if (> (incf i) n)
-	    (error 'agent-finished)
-	    (apply agent args)))))
+
+(defun restrict-trajectory (n term fn)
+  (orf term (constantly nil))
+  (funcall
+   (if n (partial #'take n) #'identity)
+   (take-until term fn :include-last t)))
+    
+
