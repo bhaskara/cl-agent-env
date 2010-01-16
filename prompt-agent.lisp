@@ -14,9 +14,9 @@
 	  
 
 
-(defun io-interface (e &key (reset :default) (include-state nil) obs-printer)
+(defun io-interface (e &key (reset :default) (include-state nil) obs-printer listeners)
   (execute-agent-in-env 
    (make-prompt-agent) e
-   (list (stdout-listener e :obs-printer obs-printer))
+   (cons (stdout-listener e :obs-printer obs-printer) listeners)
    :reset reset :include-state include-state))
   

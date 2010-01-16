@@ -6,4 +6,4 @@
 
 	   :env-agent-trajectory :execute-agent-in-env :transition :transition-state :transition-reward :transition-observation :transition-action :agent-finished
 	   :make-prompt-agent :io-interface
-	   :stdout-listener :reward-listener))
+	   :stdout-listener :reward-listener :agent-listener))

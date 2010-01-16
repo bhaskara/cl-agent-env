@@ -14,7 +14,7 @@
 	  (with-struct (transition- observation reward state) trans
 	    (pprint-logical-block (str nil)
 	      (format str "Observation: ")
-	      (funcall obs-printer str observation)
+	      (funcall obs-printer observation str)
 	      (format str "~:@_Reward: ~a~:@_~:[State: ~a~:@_~;~*~]Actions: ~a~:@_"
 		      reward (eql state :unspecified) state actions)))))))
 
@@ -30,4 +30,9 @@
       (values stats #'listener))))
 
   
-  
+(defun agent-listener (a)
+  "Listener that prints out the actions recommended by a particular agent"
+  #'(lambda (trans)
+      (with-struct (transition- observation action reward) trans
+	(mvbind (a2 v) (funcall a observation action reward)
+	  (format t "~&Agent returned ~a with extra info ~a" a2 v)))))
