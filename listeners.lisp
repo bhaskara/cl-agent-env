@@ -4,16 +4,19 @@
 ;; Useful listeners for execute-agent-in-env
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun stdout-listener (env)
+(defun stdout-listener (env &key obs-printer)
   "Listener that just prints the transition"
+  (orf obs-printer #'pprint)
   #'(lambda (trans)
       (let ((str t))
 	(terpri str)
 	(let ((actions (handler-case (legal-action-list env) (error (c) (declare (ignore c)) "unavailable"))))
 	  (with-struct (transition- observation reward state) trans
 	    (pprint-logical-block (str nil)
-	      (format str "Observation: ~a~:@_Reward: ~a~:@_~:[State: ~a~:@_~;~*~]Actions: ~a~:@_"
-		      observation reward (eql state :unspecified) state actions)))))))
+	      (format str "Observation: ")
+	      (funcall obs-printer str observation)
+	      (format str "~:@_Reward: ~a~:@_~:[State: ~a~:@_~;~*~]Actions: ~a~:@_"
+		      reward (eql state :unspecified) state actions)))))))
 
 
 (defun reward-listener ()

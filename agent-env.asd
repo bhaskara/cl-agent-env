@@ -8,8 +8,8 @@
    (:file "env" :depends-on ("package"))
    (:file "modeled-env" :depends-on ("env"))
    (:file "trajectory" :depends-on ("env"))
-   (:file "prompt-agent" :depends-on ("package"))
    (:file "listeners" :depends-on ("trajectory"))
+   (:file "prompt-agent" :depends-on ("listeners"))
    )
   :depends-on ("cl-utils"))
 
