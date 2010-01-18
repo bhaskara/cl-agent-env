@@ -30,9 +30,13 @@
       (values stats #'listener))))
 
   
-(defun agent-listener (a)
+(defun agent-listener (a &key profile)
   "Listener that prints out the actions recommended by a particular agent"
   #'(lambda (trans)
       (with-struct (transition- observation action reward) trans
-	(mvbind (a2 v) (funcall a observation action reward)
-	  (format t "~&Agent returned ~a with extra info ~a" a2 v)))))
+	(handler-case 
+	    (mvbind (a2 v) (if profile (time (funcall a observation action reward)) (funcall a observation action reward))
+	      (format t "~&Agent returned ~a with extra info ~a" a2 v))
+	  (agent-finished (c)
+	    (declare (ignore c))
+	    (format t "~&Agent signalled agent-finished"))))))
