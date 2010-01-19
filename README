@@ -1,6 +1,6 @@
 Common Lisp code for a single agent in a discrete environment (cf AI: A Modern Approach, by Russell and Norvig).
 
-Requires cl-utils (git@github.com:bhaskara/cl-utils.git).
+Requires cl-utils (git://github.com/bhaskara/cl-utils.git).
 
 An environment is a stateful black box in which an agent does actions and receives observations and rewards.  Various generic operations are defined for environments.  One simple way to define an environment is by subclassing modeled-env, and defining various purely functional operations, such as sample-next-state.  
 
