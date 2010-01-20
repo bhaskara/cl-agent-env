@@ -11,9 +11,9 @@
       (let ((str t))
 	(terpri str)
 	(let ((actions (handler-case (legal-action-list env) (error (c) (declare (ignore c)) "unavailable"))))
-	  (with-struct (transition- observation reward state) trans
+	  (with-struct (transition- observation reward state action) trans
 	    (pprint-logical-block (str nil)
-	      (format str "Observation: ")
+	      (format str "Action: ~a~:@_Observation: " action)
 	      (funcall obs-printer observation str)
 	      (format str "~:@_Reward: ~a~:@_~:[State: ~a~:@_~;~*~]Actions: ~a~:@_"
 		      reward (eql state :unspecified) state actions)))))))
