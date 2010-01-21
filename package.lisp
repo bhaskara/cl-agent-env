@@ -9,4 +9,4 @@
 
 	   :env-agent-trajectory :execute-agent-in-env :transition :transition-state :transition-reward :transition-observation :transition-action 
 
-	   :stdout-listener :reward-listener :agent-listener))
+	   :stdout-listener :reward-listener :agent-listener :progress-printer))

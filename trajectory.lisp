@@ -45,10 +45,11 @@
 		  (setq done t)
 		  nil))))))))
 
-(defun execute-agent-in-env (agent env listeners &key (reset :default) (include-state nil))
+(defun execute-agent-in-env (agent env listeners &key (reset :default) (include-state nil) (max-num-steps nil))
   "Execute agent in ENV, and call each listener after each transition.  RESET and INCLUDE-STATE are as in env-agent-trajectory."
   (declare (list listeners))
-  (do-iterator (trans (env-agent-trajectory env agent :reset reset :include-state include-state))
+  (do-iterator (trans (env-agent-trajectory env agent :reset reset :include-state include-state
+					    :max-num-steps max-num-steps))
     (dolist (l listeners)
       (funcall l trans))))
 

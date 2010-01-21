@@ -40,3 +40,13 @@
 	  (agent-finished (c)
 	    (declare (ignore c))
 	    (format t "~&Agent signalled agent-finished"))))))
+
+
+(defun progress-printer (n)
+  "Listener that prints a . every N steps"
+  (let ((i 0))
+    #'(lambda (trans)
+	(declare (ignore trans))
+	(when (= (incf i) n)
+	  (setq i 0)
+	  (format t ".")))))
