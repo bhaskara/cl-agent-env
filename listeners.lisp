@@ -34,8 +34,11 @@
   "Listener that prints out the actions recommended by a particular agent"
   #'(lambda (trans)
       (with-struct (transition- observation action reward) trans
+	(if (eq action 'reset)
+	    (observe-initial a observation)
+	    (observe a observation action reward))
 	(handler-case 
-	    (mvbind (a2 v) (if profile (time (funcall a observation action reward)) (funcall a observation action reward))
+	    (mvbind (a2 v) (if profile (time (select-action a)) (select-action a))
 	      (format t "~&Agent returned ~a with extra info ~a" a2 v))
 	  (agent-finished (c)
 	    (declare (ignore c))
