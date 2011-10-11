@@ -1,7 +1,8 @@
 (in-package :agent-env)
 
 (defmethod observe ((agent (eql 'prompt-agent)) o a r)
-  (declare (ignore o a r)))
+  (format t "~&Receiving observation ~a, ~a, ~a" o a r)
+  )
 
 (defmethod select-action ((agent (eql 'prompt-agent)))
   (format t "~&Action? ")
